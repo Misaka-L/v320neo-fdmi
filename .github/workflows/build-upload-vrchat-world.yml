@@ -1,0 +1,64 @@
+name: Build & Upload VRChat World
+
+on:
+  push:
+    branches:
+      - main
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build-and-upload-nightly-world:
+    runs-on: ubuntu-latest
+
+    env:
+      workspace-path: "${{ github.workspace }}/workspace"
+      source-path: "${{ github.workspace }}/source"
+      add-packages-script-path: "${{ github.workspace }}/.github/workflow-scripts/add-user-package-to-vrc-get.js"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        if: github.event_name != 'release'
+        with:
+          path: ${{ env.source-path}}
+
+      - name: Download Release Package
+        uses: robinraju/release-downloader@a96f54c1b5f5e09e47d9504526e96febd949d4c2
+        if: github.event_name == 'release'
+        with:
+          latest: true
+          preRelease: true
+          fileName: "*.zip"
+          extract: true
+          out-file-path: ${{ env.workspace-path }}
+
+      - name: Download Workspace Project
+        uses: robinraju/release-downloader@a96f54c1b5f5e09e47d9504526e96febd949d4c2
+        with:
+          repository: ${{ secrets.WORKSPACE_PROJECT_REPOSITORY }}
+          latest: true
+          preRelease: true
+          fileName: "*.zip"
+          extract: true
+          out-file-path: ${{ env.workspace-path }}
+          token: ${{ secrets.WORKSPACE_PROJECT_TOKEN }}
+
+      - name: Setup vrc-get
+        uses: anatawa12/sh-actions/setup-vrc-get@master
+
+      - name: Add Source Package to vrc-get
+        run: "node ${{ env.add-packages-script-path }} ${{ env.source-path }}/src/Packages/com.yuxiaviation.v320neo.fdmi"
+
+      - name: Resolve VPM Dependencies
+        run: "vrc-get resolve --project ${{ env.workspace-path }}"
+
+      - name: Build & Upload VRChat World
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          buildMethod: VRChatAerospaceUniversity.VRChatAutoBuild.Worlds.AutoBuildVRChatWorld.BuildAndUploadWorld
