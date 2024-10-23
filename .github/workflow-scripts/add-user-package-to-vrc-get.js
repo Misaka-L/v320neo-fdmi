@@ -15,7 +15,7 @@ let vrcGetConfigPath = path.join(homedir(), ".local", "share", 'VRChatCreatorCom
 console.log('vrc-get config path:', vrcGetConfigPath)
 
 if (!existsSync(vrcGetConfigPath)) {
-  throw new Error("vrc-get config file not found")
+  writeFileSync(vrcGetConfigPath, '{}')
 }
 
 const originConfigRaw = readFileSync(vrcGetConfigPath, 'utf8')
