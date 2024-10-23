@@ -15,7 +15,7 @@ jobs:
     env:
       workspace-path: "${{ github.workspace }}/workspace"
       source-path: "${{ github.workspace }}/source"
-      add-packages-script-path: "${{ github.workspace }}/.github/workflow-scripts/add-user-package-to-vrc-get.js"
+      add-packages-script-path: "${{ github.workspace }}/source/.github/workflow-scripts/add-user-package-to-vrc-get.js"
 
     steps:
       - name: Checkout
@@ -29,7 +29,7 @@ jobs:
         if: github.event_name == 'release'
         with:
           latest: true
-          preRelease: true
+          preRelease: false
           fileName: "*.zip"
           extract: true
           out-file-path: ${{ env.workspace-path }}
