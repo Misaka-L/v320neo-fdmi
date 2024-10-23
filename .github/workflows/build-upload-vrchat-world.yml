@@ -39,7 +39,7 @@ jobs:
         with:
           repository: ${{ secrets.WORKSPACE_PROJECT_REPOSITORY }}
           latest: true
-          preRelease: true
+          preRelease: false
           fileName: "*.zip"
           extract: true
           out-file-path: ${{ env.workspace-path }}
