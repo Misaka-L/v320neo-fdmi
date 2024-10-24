@@ -8,6 +8,10 @@ on:
     types: [published]
   workflow_dispatch:
 
+env:
+  workspace-reltive-path: "workspace"
+  source-reltive-path: "source"
+
 jobs:
   build-and-upload-nightly-world:
     runs-on: ubuntu-latest
@@ -89,6 +93,6 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           buildMethod: VRChatAerospaceUniversity.VRChatAutoBuild.Worlds.AutoBuildVRChatWorld.BuildAndUploadWorld
-          projectPath: ${{ env.workspace-path }}
-          version: None
+          projectPath: ${{ env.workspace-reltive-path }}
+          versioning: None
           allowDirtyBuild: true
