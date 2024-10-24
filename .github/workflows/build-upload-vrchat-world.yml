@@ -13,8 +13,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      source-path: "${{ github.workspace }}/source"
-      add-packages-script-path: "${{ github.workspace }}/source/.github/workflow-scripts/add-user-package-to-vrc-get.js"
+      source-path: "${{ github.workspace }}"
+      add-packages-script-path: "${{ github.workspace }}/.github/workflow-scripts/add-user-package-to-vrc-get.js"
 
     steps:
       - name: Checkout
