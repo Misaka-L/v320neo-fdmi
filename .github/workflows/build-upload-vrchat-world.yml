@@ -90,6 +90,11 @@ jobs:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          VRC_AUTO_BUILD_USERNAME: ${{ secrets.VRCHAT_USERNAME }}
+          VRC_AUTO_BUILD_PASSWORD: ${{ secrets.VRCHAT_PASSWORD }}
+          VRC_AUTO_BUILD_TOTP_KEY: ${{ secrets.VRCHAT_TOTP_KEY }}
+          VRC_AUTO_BUILD_SECRET_STORAGE_PATH: ${{ env.secret-path }}
+          VRC_AUTO_BUILD_SCENE_PATH: ${{ secrets.WORKSPACE_SCENE_PATH }}
         with:
           buildMethod: VRChatAerospaceUniversity.VRChatAutoBuild.Worlds.AutoBuildVRChatWorld.BuildAndUploadWorld
           projectPath: ${{ env.workspace-reltive-path }}

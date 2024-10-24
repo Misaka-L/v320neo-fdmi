@@ -7,6 +7,9 @@ jobs:
   build-and-upload-nightly-world:
     runs-on: ubuntu-latest
 
+    env:
+      secret-path: "${{ github.workspace }}/secret.json"
+
     steps:
       - name: Download Workspace Project
         uses: robinraju/release-downloader@a96f54c1b5f5e09e47d9504526e96febd949d4c2
@@ -40,13 +43,30 @@ jobs:
           git add make-gameci-happy
           git commit -m "Make GameCI Happy"
 
+      - name: Load VRChat Account Secret
+        id: load-secret
+        run: |
+          echo ${{ secrets.VRCHAT_SECRET }} > ${{ env.secret-path }}
+
       - name: Setup VRChat Account
         uses: game-ci/unity-builder@v4
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          VRC_AUTO_BUILD_USERNAME: ${{ secrets.VRCHAT_USERNAME }}
+          VRC_AUTO_BUILD_PASSWORD: ${{ secrets.VRCHAT_PASSWORD }}
+          VRC_AUTO_BUILD_TOTP_KEY: ${{ secrets.VRCHAT_TOTP_KEY }}
+          VRC_AUTO_BUILD_SECRET_STORAGE_PATH: ${{ env.secret-path }}
+          VRC_AUTO_BUILD_SCENE_PATH: ${{ vars.SETUP_SCENE_PATH }}
         with:
           buildMethod: VRChatAerospaceUniversity.VRChatAutoBuild.AutoBuildAuthentication.SetupAccount
           versioning: None
           allowDirtyBuild: true
+
+      - name: Save VRChat Account Secret
+        run: cat ${{ env.secret-path }} | gh secret set VRCHAT_SECRET --app actions
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.event.repository.name }}
