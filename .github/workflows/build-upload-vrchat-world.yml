@@ -82,18 +82,6 @@ jobs:
           restore-keys: |
             Library-Build-
 
-      - name: Setup Unity
-        id: setup-unity
-        uses: kuler90/setup-unity@cfd7f2e4c3de6577a8776104278bcb0bf541173d
-        with:
-          install-path: /mnt
-
-      - name: Activate Unity
-        uses: kuler90/activate-unity@0c9d33dfb862ae776357a37ba2f2ccdb9978f422
-        with:
-          unity-username: ${{ secrets.UNITY_EMAIL }}
-          unity-password: ${{ secrets.UNITY_PASSWORD }}
-
       - name: Load VRChat Account Secret
         id: load-secret
         run: |
