@@ -71,6 +71,14 @@ jobs:
         working-directory: ${{ env.workspace-path }}
         run: "vrc-get install com.yuxiaviation.v320neo.fdmi -y"
 
+      - name: Make GameCI Happy
+        working-directory: ${{ env.workspace-path }}
+        run: |
+          git init
+          echo "Make GameCI Happy" > make-gameci-happy
+          git add make-gameci-happy
+          git commit -m "Make GameCI Happy"
+
       - name: Build & Upload VRChat World
         uses: game-ci/unity-builder@v4
         env:
