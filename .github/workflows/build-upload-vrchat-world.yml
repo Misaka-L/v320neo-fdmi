@@ -22,11 +22,6 @@ jobs:
       UNITY_SERIAL: XXXXX-XXXXX-XXXXX-XXXXX-XXXXX
 
     steps:
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        with:
-          detached: true
-
       - name: Checkout
         uses: actions/checkout@v4
         if: github.event_name != 'release'
@@ -63,12 +58,6 @@ jobs:
           vrc-get repo add https://orels1.github.io/UdonToolkit/index.json
           vrc-get repo list
 
-      - name: Add AutoBuild Packages to Workspace
-        working-directory: ${{ env.workspace-path }}
-        run: |
-          vrc-get install com.yuxiaviation.vrchat.autobuild -y
-          vrc-get install com.yuxiaviation.vrchat.autobuild.worlds -y
-
       - name: Resolve VPM Dependencies
         working-directory: ${{ env.workspace-path }}
         run: "vrc-get resolve"
@@ -84,6 +73,12 @@ jobs:
       - name: Add Source Pacakge to Workspace
         working-directory: ${{ env.workspace-path }}
         run: "vrc-get install com.yuxiaviation.v320neo.fdmi -y"
+
+      - name: Add AutoBuild Packages to Workspace
+        working-directory: ${{ env.workspace-path }}
+        run: |
+          vrc-get install com.yuxiaviation.vrchat.autobuild -y
+          vrc-get install com.yuxiaviation.vrchat.autobuild.world -y
 
       - name: Cache Library
         uses: actions/cache@v4
