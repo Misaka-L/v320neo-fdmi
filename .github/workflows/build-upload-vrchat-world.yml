@@ -13,8 +13,9 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      source-path: "${{ github.workspace }}"
-      add-packages-script-path: "${{ github.workspace }}/.github/workflow-scripts/add-user-package-to-vrc-get.js"
+      workspace-path: "${{ github.workspace }}/workspace"
+      source-path: "${{ github.workspace }}/source"
+      add-packages-script-path: "${{ github.workspace }}/source/.github/workflow-scripts/add-user-package-to-vrc-get.js"
 
     steps:
       - name: Checkout
@@ -29,6 +30,7 @@ jobs:
         with:
           latest: true
           preRelease: false
+          out-file-path: ${{ env.source-path }}
           fileName: "*.zip"
           extract: true
 
@@ -38,6 +40,7 @@ jobs:
           repository: ${{ secrets.WORKSPACE_PROJECT_REPOSITORY }}
           latest: true
           preRelease: false
+          out-file-path: ${{ env.workspace-path }}
           fileName: "*.zip"
           extract: true
           token: ${{ secrets.WORKSPACE_PROJECT_TOKEN }}
@@ -53,12 +56,19 @@ jobs:
           vrc-get repo list
 
       - name: Add Source Package to vrc-get
+        if: github.event_name != 'release'
         run: "node ${{ env.add-packages-script-path }} ${{ env.source-path }}/src/Packages/com.yuxiaviation.v320neo.fdmi"
 
+      - name: Add Release Pacakge to vrc-get
+        if: github.event_name == 'release'
+        run: "node ${{ env.add-packages-script-path }} ${{ env.source-path }}"
+
       - name: Resolve VPM Dependencies
+        working-directory: ${{ env.workspace-path }}
         run: "vrc-get resolve"
 
       - name: Add Source Pacakge to Workspace
+        working-directory: ${{ env.workspace-path }}
         run: "vrc-get install com.yuxiaviation.v320neo.fdmi -y"
 
       - name: Build & Upload VRChat World
@@ -69,3 +79,6 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           buildMethod: VRChatAerospaceUniversity.VRChatAutoBuild.Worlds.AutoBuildVRChatWorld.BuildAndUploadWorld
+          projectPath: ${{ env.workspace-path }}
+          version: None
+          allowDirtyBuild: true
