@@ -52,6 +52,7 @@ jobs:
         run: |
           vrc-get repo add https://vpm.gyoku.tech/vpm.json
           vrc-get repo add https://pkg-index.yuxiaviation.com
+          vrc-get repo add https://orels1.github.io/UdonToolkit/index.json
           vrc-get repo list
 
       - name: Add Source Package to vrc-get
