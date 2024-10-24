@@ -20,6 +20,7 @@ jobs:
       workspace-path: "${{ github.workspace }}/workspace"
       source-path: "${{ github.workspace }}/source"
       add-packages-script-path: "${{ github.workspace }}/source/.github/workflow-scripts/add-user-package-to-vrc-get.js"
+      secret-path: "${{ github.workspace }}/secret.json"
 
     steps:
       - name: Checkout
@@ -84,19 +85,27 @@ jobs:
           git add make-gameci-happy
           git commit -m "Make GameCI Happy"
 
+      - name: Load VRChat Account Secret
+        id: load-secret
+        run: |
+          echo ${{ secrets.VRCHAT_SECRET }} > ${{ env.secret-path }}
+
       - name: Build & Upload VRChat World
         uses: game-ci/unity-builder@v4
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          VRC_AUTO_BUILD_USERNAME: ${{ secrets.VRCHAT_USERNAME }}
-          VRC_AUTO_BUILD_PASSWORD: ${{ secrets.VRCHAT_PASSWORD }}
-          VRC_AUTO_BUILD_TOTP_KEY: ${{ secrets.VRCHAT_TOTP_KEY }}
-          VRC_AUTO_BUILD_SECRET_STORAGE_PATH: ${{ env.secret-path }}
-          VRC_AUTO_BUILD_SCENE_PATH: ${{ secrets.WORKSPACE_SCENE_PATH }}
         with:
+          customParameters: "--vrchat-auto-build-scene-path ${{ vars.SETUP_SCENE_PATH }} --vrchat-auto-build-username ${{ secrets.VRCHAT_USERNAME }} --vrchat-auto-build-password ${{ secrets.VRCHAT_PASSWORD }} --vrchat-auto-build-totp-key ${{ secrets.VRCHAT_TOTP_KEY }} --vrchat-auto-build-secret-storage-path ${{ env.secret-path }}"
           buildMethod: VRChatAerospaceUniversity.VRChatAutoBuild.Worlds.AutoBuildVRChatWorld.BuildAndUploadWorld
           projectPath: ${{ env.workspace-reltive-path }}
           versioning: None
           allowDirtyBuild: true
+
+      - name: Save VRChat Account Secret
+        run: cat ${{ env.secret-path }} | gh secret set VRCHAT_SECRET --app actions
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.event.repository.name }}
