@@ -77,8 +77,8 @@ jobs:
       - name: Add AutoBuild Packages to Workspace
         working-directory: ${{ env.workspace-path }}
         run: |
-          "vrc-get install com.yuxiaviation.vrchat.autobuild -y"
-          "vrc-get install com.yuxiaviation.vrchat.autobuild.worlds -y"
+          vrc-get install com.yuxiaviation.vrchat.autobuild -y
+          vrc-get install com.yuxiaviation.vrchat.autobuild.worlds -y
 
       - name: Cache Library
         uses: actions/cache@v4
