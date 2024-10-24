@@ -40,6 +40,11 @@ jobs:
       - name: Add AutoBuild Pacakge to Workspace
         run: "vrc-get install com.yuxiaviation.vrchat.autobuild -y"
 
+      - name: Install FUSE
+        run: |
+          sudo add-apt-repository universe
+          sudo apt install libfuse2t64 -y
+
       - name: Setup Unity
         id: setup-unity
         uses: kuler90/setup-unity@cfd7f2e4c3de6577a8776104278bcb0bf541173d
