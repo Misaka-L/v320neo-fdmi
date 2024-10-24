@@ -56,7 +56,7 @@ jobs:
         run: "node ${{ env.add-packages-script-path }} ${{ env.source-path }}/src/Packages/com.yuxiaviation.v320neo.fdmi"
 
       - name: Resolve VPM Dependencies
-        run: "vrc-get resolve -y"
+        run: "vrc-get resolve"
 
       - name: Add Source Pacakge to Workspace
         run: "vrc-get install com.yuxiaviation.v320neo.fdmi -y"
