@@ -119,7 +119,7 @@ jobs:
             -executeMethod VRChatAerospaceUniversity.VRChatAutoBuild.Worlds.AutoBuildVRChatWorld.BuildAndUploadWorld
         env:
           VRC_AUTO_BUILD_CONTENT_ID: ${{ vars.NIGHTLY_WORLD_CONTENT_ID }}
-          VRC_AUTO_BUILD_SCENE_PATH: ${{ vars.SETUP_SCENE_PATH }}
+          VRC_AUTO_BUILD_SCENE_PATH: ${{ secrets.WORKSPACE_SCENE_PATH }}
           VRC_AUTO_BUILD_USERNAME: ${{ secrets.VRCHAT_USERNAME }}
           VRC_AUTO_BUILD_PASSWORD: ${{ secrets.VRCHAT_PASSWORD }}
           VRC_AUTO_BUILD_TOTP_KEY: ${{ secrets.VRCHAT_TOTP_KEY }}
