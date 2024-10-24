@@ -62,13 +62,18 @@ jobs:
           echo "UNITY_SERIAL=$UNITY_SERIAL" >> $GITHUB_ENV
 
       - name: Setup VRChat Account
-        run: "docker run -v ${{ github.workspace }}:/project ${{ env.unity-docker-image }} -projectPath /project -username ${{ secrets.UNITY_EMAIL }} -password ${{ secrets.UNITY_PASSWORD }} -serial ${{ env.UNITY_SERIAL }} -batchmode -logFile - -executeMethod VRChatAerospaceUniversity.VRChatAutoBuild.AutoBuildAuthentication.SetupAccount"
-        env:
-          VRC_AUTO_BUILD_SCENE_PATH: ${{ vars.SETUP_SCENE_PATH }}
-          VRC_AUTO_BUILD_USERNAME: ${{ secrets.VRCHAT_USERNAME }}
-          VRC_AUTO_BUILD_PASSWORD: ${{ secrets.VRCHAT_PASSWORD }}
-          VRC_AUTO_BUILD_TOTP_KEY: ${{ secrets.VRCHAT_TOTP_KEY }}
-          VRC_AUTO_BUILD_SECRET_STORAGE_PATH: ${{ env.secret-path }}
+        run: |
+          docker run -v ${{ github.workspace }}:/project \
+            ${{ env.unity-docker-image }} \
+            unity-editor -projectPath /project \
+            -username ${{ secrets.UNITY_EMAIL }} -password ${{ secrets.UNITY_PASSWORD }} -serial ${{ env.UNITY_SERIAL }} \
+            -batchmode -logFile - \
+            -executeMethod VRChatAerospaceUniversity.VRChatAutoBuild.AutoBuildAuthentication.SetupAccount \
+            --vrc-auto-build-secret-storage-path ${{ env.secret-path }} \
+            --vrc-auto-build-username ${{ secrets.VRCHAT_USERNAME }} \
+            --vrc-auto-build-password ${{ secrets.VRCHAT_PASSWORD }} \
+            --vrc-auto-build-totp-key ${{ secrets.VRCHAT_TOTP_KEY }} \
+            --vrc-auto-build-scene-path ${{ vars.SETUP_SCENE_PATH }}
 
       - name: Save VRChat Account Secret
         run: cat ${{ env.secret-path }} | gh secret set VRCHAT_SECRET --app actions
