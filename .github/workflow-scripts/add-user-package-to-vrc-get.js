@@ -10,18 +10,18 @@ if (process.argv.length !== 3) {
   throw new Error("Usage: node add-user-package-to-vrc-get.js <path>")
 }
 
-let vrcGetConfigPath = path.join(homedir(), ".local", "share", 'VRChatCreatorCompanion', 'vrc-get')
-let vrcGetConfigJsonPath = path.join(vrcGetConfigPath, "settings.json")
+let vccConfigPath = path.join(homedir(), ".local", "share", 'VRChatCreatorCompanion')
+let vccConfigJsonPath = path.join(vccConfigPath, "settings.json")
 
-console.log('vrc-get config path:', vrcGetConfigPath)
-console.log('vrc-get config json path:', vrcGetConfigJsonPath)
+console.log('vrc-get config path:', vccConfigPath)
+console.log('vrc-get config json path:', vccConfigJsonPath)
 
-if (!existsSync(vrcGetConfigJsonPath)) {
-  mkdirSync(vrcGetConfigPath, { recursive: true })
-  writeFileSync(vrcGetConfigJsonPath, '{}')
+if (!existsSync(vccConfigJsonPath)) {
+  mkdirSync(vccConfigPath, { recursive: true })
+  writeFileSync(vccConfigJsonPath, '{}')
 }
 
-const originConfigRaw = readFileSync(vrcGetConfigJsonPath, 'utf8')
+const originConfigRaw = readFileSync(vccConfigJsonPath, 'utf8')
 const originConfig = JSON.parse(originConfigRaw)
 
 if (!originConfig.userPackageFolders || Array.isArray(originConfig.userPackageFolders)) {
@@ -32,6 +32,6 @@ originConfig.userPackageFolders.push(process.argv[2])
 
 const newConfigRaw = JSON.stringify(originConfig)
 
-writeFileSync(vrcGetConfigJsonPath, newConfigRaw)
+writeFileSync(vccConfigJsonPath, newConfigRaw)
 
 console.log('Added user package folder to vrc-get config:', process.argv[2])
