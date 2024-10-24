@@ -20,7 +20,7 @@ jobs:
       workspace-path: "${{ github.workspace }}/workspace"
       source-path: "${{ github.workspace }}/source"
       add-packages-script-path: "${{ github.workspace }}/source/.github/workflow-scripts/add-user-package-to-vrc-get.js"
-      secret-path: "${{ github.workspace }}/secret.json"
+      secret-path: "secret.json"
 
     steps:
       - name: Checkout

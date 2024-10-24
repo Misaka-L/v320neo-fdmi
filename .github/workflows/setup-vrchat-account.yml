@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      secret-path: "${{ github.workspace }}/secret.json"
+      secret-path: "secret.json"
 
     steps:
       - name: Download Workspace Project
