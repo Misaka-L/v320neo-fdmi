@@ -43,7 +43,7 @@ jobs:
       - name: Install FUSE
         run: |
           sudo add-apt-repository universe
-          sudo apt install libfuse2t64 -y
+          sudo apt-get install libfuse2 -y
 
       - name: Setup Unity
         id: setup-unity
