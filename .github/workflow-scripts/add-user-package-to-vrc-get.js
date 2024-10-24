@@ -1,4 +1,4 @@
-const { readFileSync, existsSync, writeFileSync, mkdir } = require('fs')
+const { readFileSync, existsSync, writeFileSync, mkdir, mkdirSync } = require('fs')
 const { homedir } = require('os')
 const path = require('path')
 
@@ -17,7 +17,7 @@ console.log('vrc-get config path:', vrcGetConfigPath)
 console.log('vrc-get config json path:', vrcGetConfigJsonPath)
 
 if (!existsSync(vrcGetConfigJsonPath)) {
-  mkdir(vrcGetConfigPath, { recursive: true })
+  mkdirSync(vrcGetConfigPath, { recursive: true })
   writeFileSync(vrcGetConfigJsonPath, '{}')
 }
 
@@ -30,7 +30,7 @@ if (!originConfig.userPackageFolders || Array.isArray(originConfig.userPackageFo
 
 originConfig.userPackageFolders.push(process.argv[2])
 
-const newConfigRaw = JSON.stringify(originConfig, null, 2)
+const newConfigRaw = JSON.stringify(originConfig)
 
 writeFileSync(vrcGetConfigJsonPath, newConfigRaw)
 
