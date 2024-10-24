@@ -57,9 +57,8 @@ jobs:
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         run: |
-          "SERIAL="$(echo $UNITY_LICENSE | node ${{ env.get-serial-script-path }})""
-          "echo ::add-mask::$SERIAL"
-          "echo UNITY_SERIAL=$SERIAL >> $GITHUB_ENV"
+          "echo "UNITY_SERIAL="$(echo $UNITY_LICENSE | node ${{ env.get-serial-script-path }} >> $GITHUB_ENV"
+          "echo ::add-mask::${{ env.UNITY_SERIAL }}"
 
       - name: Setup VRChat Account
         run: "docker run -v ${{ github.workspace }}:/project ${{ env.unity-docker-image }} -projectPath /project -username ${{ secrets.UNITY_EMAIL }} -password ${{ secrets.UNITY_PASSWORD }} -serial ${{ env.UNITY_SERIAL }} -batchmode -logFile - -executeMethod VRChatAerospaceUniversity.VRChatAutoBuild.AutoBuildAuthentication.SetupAccount"
