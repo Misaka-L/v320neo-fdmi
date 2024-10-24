@@ -9,6 +9,9 @@ jobs:
 
     env:
       secret-path: "${{ github.workspace }}/secret.json"
+      unity-docker-image: ubuntu-2022.3.22f1-windows-mono-3.1.0
+      get-serial-script-path: "${{ github.workspace }}/source/.github/workflow-scripts/get-serial-from-license-file.js"
+      UNITY_SERIAL: XXXXX-XXXXX-XXXXX-XXXXX-XXXXX
 
     steps:
       - name: Download Workspace Project
@@ -40,30 +43,23 @@ jobs:
       - name: Add AutoBuild Pacakge to Workspace
         run: "vrc-get install com.yuxiaviation.vrchat.autobuild -y"
 
-      - name: Install FUSE
-        run: |
-          sudo add-apt-repository universe
-          sudo apt-get install libfuse2 -y
-
-      - name: Setup Unity
-        id: setup-unity
-        uses: kuler90/setup-unity@cfd7f2e4c3de6577a8776104278bcb0bf541173d
-        with:
-          install-path: /mnt
-
-      - name: Activate Unity
-        uses: kuler90/activate-unity@0c9d33dfb862ae776357a37ba2f2ccdb9978f422
-        with:
-          unity-username: ${{ secrets.UNITY_EMAIL }}
-          unity-password: ${{ secrets.UNITY_PASSWORD }}
-
       - name: Load VRChat Account Secret
         id: load-secret
+        env:
+          VRCHAT_SECRET: ${{ secrets.VRCHAT_SECRET }}
         run: |
-          echo ${{ secrets.VRCHAT_SECRET }} > ${{ env.secret-path }}
+          echo $VRCHAT_SECRET > ${{ env.secret-path }}
+
+      - name: Get Unity Serial
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        run: |
+          "SERIAL=`echo $UNITY_LICENSE | node ${{ env.get-serial-script-path }}`"
+          "echo ::add-mask::$SERIAL"
+          "echo UNITY_SERIAL=$SERIAL >> $GITHUB_ENV"
 
       - name: Setup VRChat Account
-        run: "${{ steps.setup-unity.outputs.unity-path }} -batchmode -logFile - -executeMethod VRChatAerospaceUniversity.VRChatAutoBuild.AutoBuildAuthentication.SetupAccount"
+        run: "docker run ${{ env.unity-docker-image }} -username ${{ secrets.UNITY_EMAIL }} -password ${{ secrets.UNITY_PASSWORD }} -serial ${{ env.UNITY_SERIAL }} -batchmode -logFile - -executeMethod VRChatAerospaceUniversity.VRChatAutoBuild.AutoBuildAuthentication.SetupAccount"
         env:
           VRC_AUTO_BUILD_SCENE_PATH: ${{ vars.SETUP_SCENE_PATH }}
           VRC_AUTO_BUILD_USERNAME: ${{ secrets.VRCHAT_USERNAME }}
