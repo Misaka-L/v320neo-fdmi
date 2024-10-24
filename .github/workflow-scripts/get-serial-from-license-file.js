@@ -1,4 +1,4 @@
-const license = process.env.UNITY_LICENSE;
+const license = require('fs').readFileSync(0, 'utf-8');
 
 const startKey = `<DeveloperData Value="`;
 const endKey = `"/>`;
