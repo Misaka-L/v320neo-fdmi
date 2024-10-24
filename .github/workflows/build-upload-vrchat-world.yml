@@ -85,7 +85,7 @@ jobs:
       - name: Load VRChat Account Secret
         id: load-secret
         run: |
-          echo ${{ secrets.VRCHAT_SECRET }} > ${{ env.secret-path }}
+          echo ${{ secrets.VRCHAT_SECRET }} > ${{ env.workspace-path }}/${{ env.secret-path }}
 
       - name: Get Unity Serial
         env:
