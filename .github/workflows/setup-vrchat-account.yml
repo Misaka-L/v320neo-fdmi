@@ -9,11 +9,14 @@ jobs:
 
     env:
       secret-path: "${{ github.workspace }}/secret.json"
-      unity-docker-image: ubuntu-2022.3.22f1-windows-mono-3.1.0
+      unity-docker-image: unityci/editor:ubuntu-2022.3.22f1-windows-mono-3.1.0
       get-serial-script-path: "${{ github.workspace }}/source/.github/workflow-scripts/get-serial-from-license-file.js"
       UNITY_SERIAL: XXXXX-XXXXX-XXXXX-XXXXX-XXXXX
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Download Workspace Project
         uses: robinraju/release-downloader@a96f54c1b5f5e09e47d9504526e96febd949d4c2
         with:
@@ -59,7 +62,7 @@ jobs:
           "echo UNITY_SERIAL=$SERIAL >> $GITHUB_ENV"
 
       - name: Setup VRChat Account
-        run: "docker run ${{ env.unity-docker-image }} -username ${{ secrets.UNITY_EMAIL }} -password ${{ secrets.UNITY_PASSWORD }} -serial ${{ env.UNITY_SERIAL }} -batchmode -logFile - -executeMethod VRChatAerospaceUniversity.VRChatAutoBuild.AutoBuildAuthentication.SetupAccount"
+        run: "docker run -v ${{ github.workspace }}:/project ${{ env.unity-docker-image }} -projectPath /project -username ${{ secrets.UNITY_EMAIL }} -password ${{ secrets.UNITY_PASSWORD }} -serial ${{ env.UNITY_SERIAL }} -batchmode -logFile - -executeMethod VRChatAerospaceUniversity.VRChatAutoBuild.AutoBuildAuthentication.SetupAccount"
         env:
           VRC_AUTO_BUILD_SCENE_PATH: ${{ vars.SETUP_SCENE_PATH }}
           VRC_AUTO_BUILD_USERNAME: ${{ secrets.VRCHAT_USERNAME }}
