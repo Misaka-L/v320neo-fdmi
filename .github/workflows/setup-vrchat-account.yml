@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      secret-path: "secret.json"
+      secret-path: "${{ github.workspace }}/secret.json"
 
     steps:
       - name: Download Workspace Project
@@ -18,7 +18,7 @@ jobs:
           tag: ${{ secrets.SETUP_PROJECT_TAG }}
           fileName: "*.zip"
           extract: true
-          token: ${{ secrets.WORKSPACE_PROJECT_TOKEN }}
+          token: ${{ secrets.ACTION_GITHUB_TOKEN }}
 
       - name: Cache Library
         uses: actions/cache@v4
@@ -40,14 +40,17 @@ jobs:
       - name: Add AutoBuild Pacakge to Workspace
         run: "vrc-get install com.yuxiaviation.vrchat.autobuild -y"
 
-      - name: Make GameCI Happy
-        run: |
-          git init
-          echo "Make GameCI Happy" > make-gameci-happy
-          git config user.email "make-gameci-happy@example.com"
-          git config user.name "Make GameCI happy"
-          git add make-gameci-happy
-          git commit -m "Make GameCI Happy"
+      - name: Setup Unity
+        id: setup-unity
+        uses: kuler90/setup-unity@cfd7f2e4c3de6577a8776104278bcb0bf541173d
+        with:
+          install-path: /mnt
+
+      - name: Activate Unity
+        uses: kuler90/activate-unity@0c9d33dfb862ae776357a37ba2f2ccdb9978f422
+        with:
+          unity-username: ${{ secrets.UNITY_EMAIL }}
+          unity-password: ${{ secrets.UNITY_PASSWORD }}
 
       - name: Load VRChat Account Secret
         id: load-secret
@@ -55,19 +58,16 @@ jobs:
           echo ${{ secrets.VRCHAT_SECRET }} > ${{ env.secret-path }}
 
       - name: Setup VRChat Account
-        uses: game-ci/unity-builder@v4
+        run: "${{ steps.setup-unity.outputs.unity-path }} -batchmode -logFile - -executeMethod VRChatAerospaceUniversity.VRChatAutoBuild.AutoBuildAuthentication.SetupAccount"
         env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        with:
-          buildMethod: VRChatAerospaceUniversity.VRChatAutoBuild.AutoBuildAuthentication.SetupAccount
-          customParameters: "--vrchat-auto-build-scene-path ${{ vars.SETUP_SCENE_PATH }} --vrchat-auto-build-username ${{ secrets.VRCHAT_USERNAME }} --vrchat-auto-build-password ${{ secrets.VRCHAT_PASSWORD }} --vrchat-auto-build-totp-key ${{ secrets.VRCHAT_TOTP_KEY }} --vrchat-auto-build-secret-storage-path ${{ env.secret-path }}"
-          versioning: None
-          allowDirtyBuild: true
+          VRC_AUTO_BUILD_SCENE_PATH: ${{ vars.SETUP_SCENE_PATH }}
+          VRC_AUTO_BUILD_USERNAME: ${{ secrets.VRCHAT_USERNAME }}
+          VRC_AUTO_BUILD_PASSWORD: ${{ secrets.VRCHAT_PASSWORD }}
+          VRC_AUTO_BUILD_TOTP_KEY: ${{ secrets.VRCHAT_TOTP_KEY }}
+          VRC_AUTO_BUILD_SECRET_STORAGE_PATH: ${{ env.secret-path }}
 
       - name: Save VRChat Account Secret
         run: cat ${{ env.secret-path }} | gh secret set VRCHAT_SECRET --app actions
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.ACTION_GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
