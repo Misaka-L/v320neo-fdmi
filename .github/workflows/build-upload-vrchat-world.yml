@@ -48,6 +48,12 @@ jobs:
       - name: Setup vrc-get
         uses: anatawa12/sh-actions/setup-vrc-get@master
 
+      - name: Add VPM Repositories
+        run: |
+          vrc-get repo add https://vpm.gyoku.tech/vpm.json
+          vrc-get repo add https://pkg-index.yuxiaviation.com
+          vrc-get repo list
+
       - name: Add Source Package to vrc-get
         run: "node ${{ env.add-packages-script-path }} ${{ env.source-path }}/src/Packages/com.yuxiaviation.v320neo.fdmi"
 
