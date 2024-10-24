@@ -57,7 +57,7 @@ jobs:
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         run: |
-          "SERIAL=$(echo $UNITY_LICENSE | node ${{ env.get-serial-script-path }})"
+          "SERIAL=$(node ${{ env.get-serial-script-path }})"
           "echo ::add-mask::$SERIAL"
           "echo UNITY_SERIAL=$SERIAL >> $GITHUB_ENV"
 

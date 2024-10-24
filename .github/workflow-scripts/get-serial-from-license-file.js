@@ -1,4 +1,4 @@
-const license = process.env.LICENSE_FILE;
+const license = process.env.UNITY_LICENSE;
 
 const startKey = `<DeveloperData Value="`;
 const endKey = `"/>`;
