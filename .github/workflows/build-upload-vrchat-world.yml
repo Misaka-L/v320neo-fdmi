@@ -76,6 +76,8 @@ jobs:
         run: |
           git init
           echo "Make GameCI Happy" > make-gameci-happy
+          git config user.email "make-gameci-happy@example.com"
+          git config user.name "Make GameCI happy"
           git add make-gameci-happy
           git commit -m "Make GameCI Happy"
 
