@@ -58,14 +58,6 @@ jobs:
           vrc-get repo add https://orels1.github.io/UdonToolkit/index.json
           vrc-get repo list
 
-      - name: Add Source Package to vrc-get
-        if: github.event_name != 'release'
-        run: "node ${{ env.add-packages-script-path }} ${{ env.source-path }}/src/Packages/com.yuxiaviation.v320neo.fdmi"
-
-      - name: Add Release Pacakge to vrc-get
-        if: github.event_name == 'release'
-        run: "node ${{ env.add-packages-script-path }} ${{ env.source-path }}"
-
       - name: Resolve VPM Dependencies
         working-directory: ${{ env.workspace-path }}
         run: "vrc-get resolve"
@@ -75,6 +67,14 @@ jobs:
         run: |
           vrc-get install com.yuxiaviation.vrchat.autobuild -y
           vrc-get install com.yuxiaviation.vrchat.autobuild.worlds -y
+
+      - name: Add Source Package to vrc-get
+        if: github.event_name != 'release'
+        run: "node ${{ env.add-packages-script-path }} ${{ env.source-path }}/src/Packages/com.yuxiaviation.v320neo.fdmi"
+
+      - name: Add Release Pacakge to vrc-get
+        if: github.event_name == 'release'
+        run: "node ${{ env.add-packages-script-path }} ${{ env.source-path }}"
 
       - name: Add Source Pacakge to Workspace
         working-directory: ${{ env.workspace-path }}
