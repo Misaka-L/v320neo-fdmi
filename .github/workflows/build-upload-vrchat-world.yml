@@ -84,8 +84,10 @@ jobs:
 
       - name: Load VRChat Account Secret
         id: load-secret
+        env:
+          VRCHAT_SECRET: ${{ secrets.VRCHAT_SECRET }}
         run: |
-          echo ${{ secrets.VRCHAT_SECRET }} > ${{ env.workspace-path }}/${{ env.secret-path }}
+          echo $VRCHAT_SECRET > ${{ env.workspace-path }}/${{ env.secret-path }}
 
       - name: Get Unity Serial
         env:
@@ -117,7 +119,7 @@ jobs:
           VRC_AUTO_BUILD_SECRET_STORAGE_PATH: ${{ env.secret-path }}
 
       - name: Save VRChat Account Secret
-        run: cat ${{ env.secret-path }} | gh secret set VRCHAT_SECRET --app actions
+        run: cat ${{ env.workspace-path }}/${{ env.secret-path }} | gh secret set VRCHAT_SECRET --app actions
         env:
           GH_TOKEN: ${{ secrets.ACTION_GITHUB_TOKEN }}
           OWNER: ${{ github.repository_owner }}
