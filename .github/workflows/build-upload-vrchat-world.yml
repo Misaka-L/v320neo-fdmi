@@ -115,6 +115,7 @@ jobs:
             unity-editor -projectPath /project \
             -username ${{ secrets.UNITY_EMAIL }} -password ${{ secrets.UNITY_PASSWORD }} -serial ${{ env.UNITY_SERIAL }} \
             -batchmode -logFile - \
+            -buildTarget Standalone \
             -executeMethod VRChatAerospaceUniversity.VRChatAutoBuild.Worlds.AutoBuildVRChatWorld.BuildAndUploadWorld
         env:
           VRC_AUTO_BUILD_CONTENT_ID: ${{ vars.NIGHTLY_WORLD_CONTENT_ID }}
