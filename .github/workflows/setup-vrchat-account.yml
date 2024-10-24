@@ -1,0 +1,52 @@
+name: Setup VRChat Account
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-upload-nightly-world:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Workspace Project
+        uses: robinraju/release-downloader@a96f54c1b5f5e09e47d9504526e96febd949d4c2
+        with:
+          repository: ${{ secrets.WORKSPACE_PROJECT_REPOSITORY }}
+          tag: ${{ secrets.SETUP_PROJECT_TAG }}
+          fileName: "*.zip"
+          extract: true
+          token: ${{ secrets.WORKSPACE_PROJECT_TOKEN }}
+
+      - name: Setup vrc-get
+        uses: anatawa12/sh-actions/setup-vrc-get@master
+
+      - name: Add VPM Repositories
+        run: |
+          vrc-get repo add https://pkg-index.yuxiaviation.com
+          vrc-get repo list
+
+      - name: Resolve VPM Dependencies
+        run: "vrc-get resolve"
+
+      - name: Add AutoBuild Pacakge to Workspace
+        run: "vrc-get install com.yuxiaviation.vrchat.autobuild -y"
+
+      - name: Make GameCI Happy
+        run: |
+          git init
+          echo "Make GameCI Happy" > make-gameci-happy
+          git config user.email "make-gameci-happy@example.com"
+          git config user.name "Make GameCI happy"
+          git add make-gameci-happy
+          git commit -m "Make GameCI Happy"
+
+      - name: Setup VRChat Account
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          buildMethod: VRChatAerospaceUniversity.VRChatAutoBuild.AutoBuildAuthentication.SetupAccount
+          versioning: None
+          allowDirtyBuild: true

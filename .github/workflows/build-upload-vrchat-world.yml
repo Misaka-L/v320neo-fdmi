@@ -42,8 +42,7 @@ jobs:
         uses: robinraju/release-downloader@a96f54c1b5f5e09e47d9504526e96febd949d4c2
         with:
           repository: ${{ secrets.WORKSPACE_PROJECT_REPOSITORY }}
-          latest: true
-          preRelease: false
+          tag: ${{ secrets.WORKSPACE_PROJECT_TAG }}
           out-file-path: ${{ env.workspace-path }}
           fileName: "*.zip"
           extract: true
