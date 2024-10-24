@@ -13,7 +13,6 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      workspace-path: "${{ github.workspace }}/workspace"
       source-path: "${{ github.workspace }}/source"
       add-packages-script-path: "${{ github.workspace }}/source/.github/workflow-scripts/add-user-package-to-vrc-get.js"
 
@@ -22,7 +21,7 @@ jobs:
         uses: actions/checkout@v4
         if: github.event_name != 'release'
         with:
-          path: ${{ env.source-path}}
+          path: ${{ env.source-path }}
 
       - name: Download Release Package
         uses: robinraju/release-downloader@a96f54c1b5f5e09e47d9504526e96febd949d4c2
@@ -32,7 +31,6 @@ jobs:
           preRelease: false
           fileName: "*.zip"
           extract: true
-          out-file-path: ${{ env.workspace-path }}
 
       - name: Download Workspace Project
         uses: robinraju/release-downloader@a96f54c1b5f5e09e47d9504526e96febd949d4c2
@@ -42,7 +40,6 @@ jobs:
           preRelease: false
           fileName: "*.zip"
           extract: true
-          out-file-path: ${{ env.workspace-path }}
           token: ${{ secrets.WORKSPACE_PROJECT_TOKEN }}
 
       - name: Setup vrc-get
@@ -59,7 +56,10 @@ jobs:
         run: "node ${{ env.add-packages-script-path }} ${{ env.source-path }}/src/Packages/com.yuxiaviation.v320neo.fdmi"
 
       - name: Resolve VPM Dependencies
-        run: "vrc-get resolve --project ${{ env.workspace-path }}"
+        run: "vrc-get resolve -y"
+
+      - name: Add Source Pacakge to Workspace
+        run: "vrc-get install com.yuxiaviation.v320neo.fdmi -y"
 
       - name: Build & Upload VRChat World
         uses: game-ci/unity-builder@v4
